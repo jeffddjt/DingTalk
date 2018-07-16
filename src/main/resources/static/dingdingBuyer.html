@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+	<style>
+		td{
+			height:40px;
+			width:100px;
+		}
+		input{
+			width:50px;
+		}
+		td input{
+			height:25px;
+			width:200px;
+		}
+	</style>
+</head>
+<body>
+	<div>
+		<form id="name" name="myform" method="post"  action="http://dingding.bclzdd.com/addinvoice">
+			<table>
+				<tr>  
+		            <td>1.物资类型:</td>  
+		            <td> <input type="text" name="wuzileixing"  id="wuzileixing" /> </td>  
+		        </tr>
+		        <tr>  
+		            <td>2.项目名称:</td>  
+		            <td> <input type="text" name="xiangmumingcheng" id="xiangmumingcheng"/> </td>  
+		        </tr> 
+		        <tr>  
+		            <td>3.工程名称:</td>  
+		            <td> <input type="text" name="gongchengmingcheng" id="gongchengmingcheng" /> </td>  
+		        </tr> 
+		        <tr>  
+		            <td>4.请购单号:</td>  
+		            <td> <input type="text" name="qinggoudanhao" id="qinggoudanhao" /> </td>  
+		        </tr> 
+		        <tr>  
+		            <td>5.采购单号:</td>  
+		            <td> <input type="text" name="caigoudanhao" id="caigoudanhao" /> </td>  
+		        </tr> 
+		        <tr>  
+		            <td>6.进场日期:</td>  
+		            <td> <input type="text" name="jinchangriqi" id="jinchangriqi" /> </td>  
+		        </tr> 
+		        <tr>  
+		            <td>7.车  号:</td>  
+		            <td> <input type="text" name="chehao" id="chehao" /> </td>  
+		        </tr> 
+		        <tr>  
+		            <td>8.物资编号:</td>  
+		            <td> <input type="text" name="wuzibianhao" id="wuzibianhao" /> </td>  
+		        </tr>
+		        <tr>  
+		            <td>9.物资名称:</td>  
+		            <td> <input type="text" name="wuzimingcheng" id="wuzimingcheng" /> </td>  
+		        </tr> 
+		        <tr>  
+		            <td>10.规格型号:</td>  
+		            <td> <input type="text" name="guigeleixing" id="guigeleixing" /> </td>  
+		        </tr> 
+		        <tr>  
+		            <td>11.数量:</td>  
+		            <td> <input type="text" name="shuliang" id="shuliang" /> </td>  
+		        </tr> 
+		        <tr>  
+		            <td>12.采购员签名:</td>  
+		            <td> <input type="text" name="caigouyuanqianming" id="caigouyuanqianming" /> </td>  
+		        </tr> 
+			</table>
+			<input type="button" onClick="onClick()" value="提交"/>
+		</form>
+	</div>
+</body>
+<script>
+	//document.getElementById("form").submit();
+
+	function onClick(){
+		
+		var json = 
+		{
+				wuzileixing:$("#wuzileixing").val(),
+				xiangmumingcheng:$("#xiangmumingcheng").val(),
+				gongchengmingcheng:$("#gongchengmingcheng").val(),
+
+				qinggoudanhao:$("#qinggoudanhao").val(),
+				caigoudanhao:$("#caigoudanhao").val(),
+				jinchangriqi:$("#jinchangriqi").val(),
+				chehao:$("#chehao").val(),
+
+				wuzibianhao:$("#wuzibianhao").val(),
+				wuzimingcheng:$("#wuzimingcheng").val(),
+				guigeleixing:$("#guigeleixing").val(),
+				shuliang:$("#shuliang").val(),
+				caigouyuanqianming:$("#caigouyuanqianming").val()
+				
+		};
+		var jsonstr=JSON.stringify(json);
+	 	$.ajax({
+	      type: "POST",
+	      headers: {
+	            'Content-Type': 'application/json;charset=UTF-8'
+	            },
+	      url: "http://192.168.40.45:8080/addInvoice",
+	      data: jsonstr,
+	      dataType : "json",
+	      success: function(respMsg){
+	      }
+	   });
+	}
+
+
+	// function onClick(){
+	// 	$.post("http://192.168.40.45:8080/addInvoice",$("#name").serialize(),function(res){
+	// 		console.log(res)
+	// 	});
+	// }
+
+	 	
+</script>
+</html>
