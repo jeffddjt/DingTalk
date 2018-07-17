@@ -10,8 +10,10 @@ import com.dingtalk.api.request.OapiUserGetuserinfoRequest;
 import com.dingtalk.api.response.OapiServiceGetCorpTokenResponse;
 import com.dingtalk.api.response.OapiUserGetuserinfoResponse;
 import com.dingtalk.api.response.OapiUserGetResponse;
+import com.dingtalk.api.response.OapiUserGetResponse.Roles;
 import com.config.URLConstant;
 import com.taobao.api.ApiException;
+import com.util.DyData;
 import com.util.ServiceResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -50,14 +53,15 @@ public class IndexController {
 	public ServiceResult login(@RequestParam(value = "corpId") String corpId,
 									@RequestParam(value = "authCode") String requestAuthCode, HttpServletRequest request) {
 		
-		bizLogger.info("request from {}", request.getRemoteHost());
+		bizLogger.info("request from {}", request.getHeader("referer"));
 		this.bizLogger.info("authCode: {}", requestAuthCode);
-		
+		//DyData.Referer=request.getHeader("referer");
 
 		Long start = System.currentTimeMillis();
 		//获取accessToken,注意正是代码要有异常流处理
 		OapiServiceGetCorpTokenResponse oapiServiceGetCorpTokenResponse = getOapiServiceGetCorpToken(corpId);
 		String accessToken = oapiServiceGetCorpTokenResponse.getAccessToken();
+		this.bizLogger.info("The CorpId is :{}",corpId);
 
 		//获取用户信息
 		OapiUserGetuserinfoResponse oapiUserGetuserinfoResponse = getOapiUserGetuserinfo(accessToken,requestAuthCode);
@@ -66,12 +70,23 @@ public class IndexController {
 		// 获得到userId之后应用应该处理应用自身的登录会话管理（session）,避免后续的业务交互（前端到应用服务端）每次都要重新获取用户身份，提升用户体验
 		String userId = oapiUserGetuserinfoResponse.getUserid();
 		OapiUserGetResponse oapiUserGetResponse=getOapiUser(accessToken,userId);
-        
+        List<Roles> roleList=oapiUserGetResponse.getRoles();
+        this.bizLogger.info("The roleList is:{}",oapiUserGetResponse.getBody());
+        StringBuffer sb=new StringBuffer();
+        if(roleList!=null)
+        for(int i=0,len = roleList.size();i<len;i++) {
+        	if(i==len-1) {
+        		sb.append(roleList.get(i).getName());
+        	}else {
+        		sb.append(roleList.get(i).getName());
+        	}
+        }
 		//返回结果
 		Map<String,Object> resultMap = new HashMap<>();
 		resultMap.put("userId",userId);
 		resultMap.put("corpId",corpId);
 		resultMap.put("name", oapiUserGetResponse.getName());
+		resultMap.put("role",sb.toString());
 		ServiceResult serviceResult = ServiceResult.success(resultMap);
 		return serviceResult;
 	}
@@ -79,7 +94,7 @@ public class IndexController {
 	private OapiUserGetResponse getOapiUser(String accessToken, String userid) {
 		DingTalkClient client = new DefaultDingTalkClient(URLConstant.URL_GET_USER);
 		OapiUserGetRequest request = new OapiUserGetRequest();
-		request.setUserid(userid);
+		request.setUserid(userid);		
 		request.setHttpMethod("GET");
 
 		OapiUserGetResponse response;
